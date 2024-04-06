@@ -1,0 +1,7 @@
+Some way of representing marbles (what makes up a marble in this program?):
+  
+A way to add new marbles into the bag (how do we interact with marbles and add them into the bag?):
+
+A way to remove a marble out of the bag (perhaps a random marble taken out of the bag?):
+
+A few ways that we could use to show that our implementation should be working correctly (tests):
