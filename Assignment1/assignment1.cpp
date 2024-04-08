@@ -9,12 +9,12 @@ int main() {
 
     cout << "This bag can hold up to 40 dice with different sides." << endl;
 
-    srand(time(0)); // Random number generation for die removal
+    srand(time(0)); // Seed for random number generation for die removal
 
     int DiceInBag[6] = {0}; // Count of each type of dice
     int DiceSides[] = {4, 6, 8, 10, 12, 20}; // Sides that are allowed
     int TotalDiceInBag = 0; // Initializing total number of dice in the bag
-    const int MaxCapacity = 40; // Max capacity of the bag
+    const int MaxCapacity = 11; // Max capacity of the bag
 
     char choice;
     bool quit = false;
@@ -92,7 +92,7 @@ int main() {
                     ChosenDice += DiceInBag[i];
                     if (RandomDiceIndex < ChosenDice) {
                         cout << endl << "You drew a D" << DiceSides[i] << "." << endl;
-                        DiceInBag[i]--; // Decrement the count of the selected dice
+                        DiceInBag[i]--; // Decrement the count of the chosen dice
                         TotalDiceInBag--; // Decrement total dice count
                         break;
                     }
