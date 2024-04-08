@@ -1,4 +1,3 @@
-#include <cstdio>
 #include <iostream>
 #include <ctime>
 
@@ -6,42 +5,50 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-using namespace std;
-
 int main() {
+
+    cout << "This bag can hold up to 40 dice with different sides." << endl;
+
     srand(time(0)); // Random number generation for die removal
 
-    int DiceInBag[6] = {0}; // For D4, D6, D8, D10, D12, D20
+    int DiceInBag[6] = {0}; // Count of each type of dice
     int DiceSides[] = {4, 6, 8, 10, 12, 20}; // Sides that are allowed
-    int TotalDiceInBag = 0; // Total number of dice in the bag
-    const int MaxCapacity = 100; // Max capacity of the bag
+    int TotalDiceInBag = 0; // Initializing total number of dice in the bag
+    const int MaxCapacity = 40; // Max capacity of the bag
 
     char choice;
     bool quit = false;
 
     while (!quit) {
-        cout << "Would you like to add (+) dice to the bag, remove a (-) die from the bag, or quit (q)? ";
+        cout << "Would you like to add (+) dice to the bag, remove a (-) die from the bag, or quit (q)? " ;
         cin >> choice;
 
         switch (choice) {
             case '+': {
                 int quantity;
-                cout << "Please enter quantity of dice to add (up to 10): ";
-                cin >> quantity;
+                bool ValidQuantity = false;
+                bool ExceedsCapacity = false;
 
-                // Check if adding this quantity will exceed the limit
-                if (TotalDiceInBag + quantity > MaxCapacity) {
-                    cout << "Adding these dice will exceed the bag's capacity. Please try again." << endl;
-                    break; // Continue the loop without adding dice
+                while (!ValidQuantity) {
+                    cout << "Please enter quantity of dice to add (up to 10): ";
+                    cin >> quantity;
+
+                    if (quantity <= 0 || quantity > 10) {
+                        cout << endl << "Invalid quantity. Please enter a quantity between 1 and 10." << endl << endl;
+                    } else {
+                        ValidQuantity = true;
+                        // Check if adding this quantity will exceed the limit
+                        if (TotalDiceInBag + quantity > MaxCapacity) {
+                            cout << endl << "This exceeds the max capacity of the bag. Please try a different option." << endl;
+                            ExceedsCapacity = true; // Flags this as true
+                        }
+                    }
                 }
 
-                // Continue the loop without adding dice
-                if (quantity <= 0 || quantity > 10) {
-                    cout << "Invalid quantity. Dice not added. Please try again." << endl;
-                    break;
-                }
+                if (ExceedsCapacity)
+                    break; // Go to main choice
 
-                // Add dice to the bag
+                // Adds dice to the bag
                 for (int i = 0; i < quantity; ++i) {
                     int sides;
                     bool ValidSides = false;
@@ -50,12 +57,12 @@ int main() {
                         cout << "Enter number of sides for dice " << (i + 1) << " (4, 6, 8, 10, 12, or 20): ";
                         cin >> sides;
 
-                        // Validate sides
+                        // Validates sides
                         for (int j = 0; j < 6; ++j) {
                             if (sides == DiceSides[j]) {
                                 ValidSides = true;
-                                DiceInBag[j]++;
-                                TotalDiceInBag++; // Increment total dice count
+                                DiceInBag[j]++; // Increments 
+                                TotalDiceInBag++; // Increments total dice count
                                 break;
                             }
                         }
@@ -78,13 +85,13 @@ int main() {
                     break; // Continue the loop without removing dice
                 }
 
-                // Randomly select a dice from the bag
+                // Randomly pull a dice from the bag
                 int RandomDiceIndex = rand() % TotalDice; // Random index within total dice count
                 int ChosenDice = 0;
                 for (int i = 0; i < 6; ++i) {
                     ChosenDice += DiceInBag[i];
                     if (RandomDiceIndex < ChosenDice) {
-                        cout << "You drew a D" << DiceSides[i] << "." << endl;
+                        cout << endl << "You drew a D" << DiceSides[i] << "." << endl;
                         DiceInBag[i]--; // Decrement the count of the selected dice
                         TotalDiceInBag--; // Decrement total dice count
                         break;
@@ -100,17 +107,20 @@ int main() {
         }
 
         // Outputs the bags contents.
-        cout << "Contents of bag: ";
+        cout << endl << "Contents of bag: " << endl;
         bool isEmpty = true;
         for (int i = 0; i < 6; ++i) {
             if (DiceInBag[i] > 0) {
-                cout << DiceInBag[i] << " D" << DiceSides[i] << " ";
+                cout << DiceInBag[i] << " D" << DiceSides[i] << " " << endl;
                 isEmpty = false;
             }
         }
-        if (isEmpty)
-            cout << "The bag is empty.";
-        cout << endl;
+        if (isEmpty){
+            cout << "The bag is empty." << endl << endl;
+        }
+        else{
+            cout << "Total dice in bag:" << TotalDiceInBag << endl << endl;
+        }
     }
 
     return 0;
