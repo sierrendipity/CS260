@@ -2,6 +2,8 @@
 #define BOOK_H
 
 #include <string>
+#include <iostream>
+#include <queue>
 
 // Define the struct for a book
 struct Book {
@@ -10,27 +12,29 @@ struct Book {
 };
 
 // Define the node struct
-struct BookList {
+struct BookNode {
     Book book;
-    BookList* next;
+    BookNode* left;
+    BookNode* right;
 };
 
-// Create a new node
-BookList* create_node(Book book);
-
 // Add a new node automatically by alphabetical order
-int add_book(BookList** head_ref, Book book);
+BookNode* add_book(BookNode* root, Book book);
 
 // Use binary search to locate a book
-Book* search_book(BookList** head_ref, const std::string& title);
+Book* search_book(BookNode* root, const std::string& title);
 
-// Used to display book info in test
-void display(BookList* head);
+// Delete a book
+BookNode* delete_book(BookNode* root, const std::string& title);
 
-//Delete a book
-Book delete_book(BookList** head_ref, const std::string& title);
+// Traversals
+void in_order_traversal(BookNode* root);
+void pre_order_traversal(BookNode* root);
+void post_order_traversal(BookNode* root);
+void breadth_first_traversal(BookNode* root);
 
 #endif
+
 
 
 

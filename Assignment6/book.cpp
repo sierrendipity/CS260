@@ -1,135 +1,139 @@
 #include "book.h"
-#include <iostream>
 
-// Function to create a new book node in the linked list.
-BookList* create_node(Book book) {
-    BookList* newNode = new BookList();
+// Function to create a new book node in the BST
+BookNode* create_node(Book book) {
+    BookNode* newNode = new BookNode();
     newNode->book = book;
-    newNode->next = nullptr;
+    newNode->left = nullptr;
+    newNode->right = nullptr;
     return newNode;
 }
 
-// Insert a new node automatically by lexicographica sorting
-int add_book(BookList** head_ref, Book book) {
-    BookList* newNode = create_node(book);
-
-    // If the list is empty or the new node's title is less than the head's title
-    if (*head_ref == nullptr || book.title < (*head_ref)->book.title) {
-        newNode->next = *head_ref;
-        *head_ref = newNode;
-        std::cout << "Book added: " << book.title << ", Address: " << &(newNode->book) << std::endl; // Print address after adding
-        return 1;
+// Add a book alphabetically
+BookNode* add_book(BookNode* root, Book book) {
+    if (root == nullptr) {
+        return create_node(book);
     }
-
-    // Traverse the list to find the correct position
-    BookList* current = *head_ref;
-    while (current->next != nullptr && current->next->book.title < book.title) {
-        current = current->next;
+    if (book.title < root->book.title) {
+        root->left = add_book(root->left, book);
+    } else {
+        root->right = add_book(root->right, book);
     }
-
-    // Insert the new node at the correct position
-    newNode->next = current->next;
-    current->next = newNode;
-    std::cout << "Book added: " << book.title << ", Address: " << &(newNode->book) << std::endl; // Print address after adding
-    return 1;
+    return root;
 }
 
-// Function to use binary search to locate a book by title
-Book* search_book(BookList** head_ref, const std::string& title) {
-    // Pointer to the head of the list.
-    BookList* current = *head_ref;
-
-    // Binary search variables
-    int low = 0;
-    int high = 0;
-    int mid = 0;
-
-    // Determine the length of the list
-    while (current != nullptr) {
-        high++;
-        current = current->next;
+// Use binary search to locate a book
+Book* search_book(BookNode* root, const std::string& title) {
+    if (root == nullptr || root->book.title == title) {
+        return (root != nullptr) ? &(root->book) : nullptr;
     }
-    high--; // Adjust high to the last index
-
-    current = *head_ref; // Reset current to head
-
-    // Perform binary search
-    while (low <= high) {
-        mid = low + (high - low) / 2; // Calculate the middle index
-
-        // Traverse to the middle node
-        current = *head_ref;
-        for (int i = 0; i < mid; ++i) {
-            current = current->next;
-        }
-
-        // Check if the title matches
-        if (current->book.title == title) {
-            return &(current->book); // Return the address of the found book
-        }
-        // If the title is alphabetically lower, search in the left half
-        else if (current->book.title < title) {
-            low = mid + 1;
-        }
-        // If the title is alphabetically higher, search in the right half
-        else {
-            high = mid - 1;
-        }
-    }
-
-    // Return nullptr if not found
-    return nullptr;
-}
-
-// Function to remove the book at a given position in the list and return it.
-Book delete_book(BookList** head_ref, const std::string& title) {
-    // If the list is empty, return a default book indicating no deletion occurred.
-    if (*head_ref == nullptr) {
-        return {"", -1};
-    }
-
-    BookList* temp = *head_ref;
-
-    // If the book to be deleted is the head of the list.
-    if (temp != nullptr && temp->book.title == title) {
-        *head_ref = temp->next;
-        Book deletedBook = temp->book;
-        delete temp;
-        return deletedBook;
-    }
-
-    BookList* prev = nullptr;
-    // Traverse the list to find the node with the matching title.
-    while (temp != nullptr && temp->book.title != title) {
-        prev = temp;
-        temp = temp->next;
-    }
-
-    // If the book with the given title is not found.
-    if (temp == nullptr) {
-        return {"", -1};
-    }
-
-    // Unlink the node and free memory.
-    prev->next = temp->next;
-    Book deletedBook = temp->book;
-    delete temp;
-    return deletedBook;
-}
-
-// Display the elements of the list along with their addresses
-void display(BookList* head) {
-    std::cout << std::endl << "Books in the list:" << std::endl;
-    BookList* current = head;
-    int index = 0;
-    while (current != nullptr) {
-        std::cout << "Book " << index << ": ";
-        std::cout << "Title: " << current->book.title << ", ID: " << current->book.id;
-        std::cout << ", Address: " << current << std::endl; // Print the address of the book node
-        current = current->next;
-        index++;
+    if (title < root->book.title) {
+        return search_book(root->left, title);
+    } else {
+        return search_book(root->right, title);
     }
 }
+
+// Delete a book
+BookNode* delete_book(BookNode* root, const std::string& title) {
+    if (root == nullptr)
+        return root;
+
+    // If the title to be deleted is smaller than the root's title,
+    // then it lies in the left subtree
+    if (title < root->book.title) {
+        root->left = delete_book(root->left, title);
+        return root;
+    }
+    // If the title to be deleted is greater than the root's title,
+    // then it lies in the right subtree
+    else if (title > root->book.title) {
+        root->right = delete_book(root->right, title);
+        return root;
+    }
+
+    // If title is same as root's title, then this is the node to be deleted
+    // Node with only one child or no child
+    if (root->left == nullptr) {
+        BookNode* temp = root->right;
+        delete root;
+        return temp;
+    }
+    else if (root->right == nullptr) {
+        BookNode* temp = root->left;
+        delete root;
+        return temp;
+    }
+
+    // Node with two children: Get the inorder successor (smallest
+    // in the right subtree)
+    BookNode* succParent = root;
+    BookNode* succ = root->right;
+    while (succ->left != nullptr) {
+        succParent = succ;
+        succ = succ->left;
+    }
+
+    // Copy the inorder successor's content to this node
+    root->book = succ->book;
+
+    // Delete the inorder successor
+    if (succParent->left == succ)
+        succParent->left = succ->right;
+    else
+        succParent->right = succ->right;
+    
+    delete succ;
+    return root;
+}
+
+// In-order traversal
+void in_order_traversal(BookNode* root) {
+    if (root != nullptr) {
+        in_order_traversal(root->left);
+        std::cout << "Title: " << root->book.title << ", ID: " << root->book.id << ", Address: " << root << std::endl;
+        in_order_traversal(root->right);
+    }
+}
+
+// Pre-order traversal
+void pre_order_traversal(BookNode* root) {
+    if (root != nullptr) {
+        std::cout << "Title: " << root->book.title << ", ID: " << root->book.id << ", Address: " << root << std::endl;
+        pre_order_traversal(root->left);
+        pre_order_traversal(root->right);
+    }
+}
+
+// Post-order traversal
+void post_order_traversal(BookNode* root) {
+    if (root != nullptr) {
+        post_order_traversal(root->left);
+        post_order_traversal(root->right);
+        std::cout << "Title: " << root->book.title << ", ID: " << root->book.id << ", Address: " << root << std::endl;
+    }
+}
+
+// Breadth-first traversal
+void breadth_first_traversal(BookNode* root) {
+    if (root == nullptr)
+        return;
+
+    std::queue<BookNode*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        BookNode* current = q.front();
+        q.pop();
+        std::cout << "Title: " << current->book.title << ", ID: " << current->book.id << ", Address: " << current << std::endl;
+        if (current->left != nullptr)
+            q.push(current->left);
+        if (current->right != nullptr)
+            q.push(current->right);
+    }
+}
+
+
 
 
 

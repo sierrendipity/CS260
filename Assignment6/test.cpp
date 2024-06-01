@@ -2,23 +2,22 @@
 #include "book.h"
 #include <iostream>
 
-// Test function for searching books using binary search
-void test_search(BookList** head_ref) {
-    // Test searching
+// Test function for searching books in the BST
+void test_search(BookNode** root) {
     std::cout << std::endl << "Testing search_book function:" << std::endl;
 
-    //Should be found and have same address
+    // Search for 'Eragon'
     std::cout << "Search for 'Eragon': ";
-    Book* result1 = search_book(head_ref, "Eragon");
+    Book* result1 = search_book(*root, "Eragon");
     if (result1 != nullptr) {
         std::cout << "Found: Title - " << result1->title << ", ID - " << result1->id << ", Address - " << result1 << std::endl;
     } else {
         std::cout << "Not Found" << std::endl;
     }
 
-    //Should be not found
+    // Search for 'Dune'
     std::cout << "Search for 'Dune': ";
-    Book* result2 = search_book(head_ref, "Dune");
+    Book* result2 = search_book(*root, "Dune");
     if (result2 != nullptr) {
         std::cout << "Found: Title - " << result2->title << ", ID - " << result2->id << ", Address - " << result2 << std::endl;
     } else {
@@ -26,51 +25,52 @@ void test_search(BookList** head_ref) {
     }
 }
 
+void test_add(BookNode** root) {
+    std::cout << "Before adding books:" << std::endl;
+    in_order_traversal(*root);
 
-// Test function for adding books to the list
-void test_add(BookList** head_ref) {
-    
-    // Display all books (Should be none)
-    display(*head_ref);
-    
-    // Test adding books
     std::cout << std::endl << "Testing add_book function:" << std::endl;
 
-    // Insert some books
-    add_book(head_ref, {"Murder Bot", 1234567});
-    add_book(head_ref, {"Eragon", 2345678});
-    add_book(head_ref, {"The Martian", 3456789});
-    add_book(head_ref, {"Foundation", 4567890});
+    // Add some books
+    *root = add_book(*root, {"Murder Bot", 1234567});
+    *root = add_book(*root, {"Eragon", 2345678});
+    *root = add_book(*root, {"The Martian", 3456789});
+    *root = add_book(*root, {"Foundation", 4567890});
 
-    // Display all books (Should be in order)
-    display(*head_ref);
-
+    std::cout << "After adding books:" << std::endl;
+    test_traversals(*root);
 }
 
-void test_delete(BookList** head_ref) {
+void test_delete(BookNode** root) {
     std::cout << std::endl << "Testing delete_book function:" << std::endl;
 
     // Attempt to delete the book with title "The Martian"
     std::cout << "Deleting 'The Martian': ";
-    Book deletedBook = delete_book(head_ref, "The Martian");
-    if (deletedBook.id != -1) {
-        std::cout << "Deleted Book - Title: " << deletedBook.title << ", ID: " << deletedBook.id << std::endl;
-    } else {
-        std::cout << "Book not found" << std::endl;
-    }
+    *root = delete_book(*root, "The Martian");
 
-    // Display the current state of the book list
-    display(*head_ref);
+    std::cout << std::endl << "After deleting 'The Martian':" << std::endl;
+    test_traversals(*root);
 
     // Attempt to delete the book with title "Foundation"
-    std::cout << "Deleting 'Foundation': ";
-    deletedBook = delete_book(head_ref, "Foundation");
-    if (deletedBook.id != -1) {
-        std::cout << "Deleted Book - Title: " << deletedBook.title << ", ID: " << deletedBook.id << std::endl;
-    } else {
-        std::cout << "Book not found" << std::endl;
-    }
+    std::cout << std::endl << "Deleting 'Foundation': ";
+    *root = delete_book(*root, "Foundation");
 
-    // Display the current state of the book list
-    display(*head_ref);
+    std::cout << std::endl << "After deleting 'Foundation':" << std::endl;
+    test_traversals(*root);
 }
+
+void test_traversals(BookNode* root) {
+    std::cout << std::endl << "Testing in_order_traversal function:" << std::endl;
+    in_order_traversal(root);
+
+    std::cout << std::endl << "Testing pre_order_traversal function:" << std::endl;
+    pre_order_traversal(root);
+
+    std::cout << std::endl << "Testing post_order_traversal function:" << std::endl;
+    post_order_traversal(root);
+
+    std::cout << std::endl << "Testing breadth_first_traversal function:" << std::endl;
+    breadth_first_traversal(root);
+}
+
+
