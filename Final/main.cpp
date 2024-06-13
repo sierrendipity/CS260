@@ -9,20 +9,19 @@ int main() {
 
     do {
         std::cout << "\nMenu:\n";
-        std::cout << "1. Add an iceberg (vertex)\n";
-        std::cout << "2. Add a fishing path (edge)\n";
+        std::cout << "1. Go find a new iceberg\n";
+        std::cout << "2. Add a fishing path between icebergs (edge)\n";
         std::cout << "3. Find shortest path between icebergs\n";
-        std::cout << "4. Find MST\n";
-        std::cout << "5. Display Graph\n";
+        std::cout << "4. Find the minimum spanning tree\n";
+        std::cout << "5. Display graph of icebergs\n";
         std::cout << "6. Test\n";
         std::cout << "7. Exit\n";
         std::cout << "Enter your choice: ";
         
-        // Validate input
         while (!(std::cin >> choice) || choice < 1 || choice > 7) {
             std::cout << "Invalid input. Please enter a number between 1 and 7: ";
-            std::cin.clear(); // Clear error flags
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard invalid input
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
         switch (choice) {
@@ -77,11 +76,12 @@ int main() {
                     std::cout << "Some Tests Failed!\n";
                 break;
             }
-            case 7:
-                std::cout << "Exiting. Thank you! \n";
+            case 7: {
+                std::cout << "Exiting the program.\n";
                 break;
+            }
             default:
-                std::cout << "Invalid choice! Please try again.\n";
+                break;
         }
     } while (choice != 7);
 
